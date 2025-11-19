@@ -1,13 +1,9 @@
 ﻿import { useTheme } from "@/hooks/useTheme";
+import AddTodoButton from "../components/AddTodoButton";
+import type { Todo } from "@/types/todo";
 import { Platform, Text, TouchableOpacity, View } from "react-native";
 import "./../global.css";
 import { useEffect, useMemo, useState } from "react";
-
-type Todo = {
-  _id?: string;
-  name: string;
-  description: string;
-};
 
 const API_PORT = process.env.API_PORT?.trim() || "3000";
 const TODOS_PATH = "/todos";
@@ -33,6 +29,10 @@ export default function Index() {
   const [error, setError] = useState("");
   const baseUrl = useMemo(() => buildApiBaseUrl(), []);
 
+  const handleTodoCreated = (todo: Todo) => {
+    setTodos((prev) => [todo, ...prev]);
+  };
+
   async function loadTodos() {
     try {
       const res = await fetch(`${baseUrl}${TODOS_PATH}`);
@@ -57,8 +57,9 @@ export default function Index() {
         className="mb-4 text-lg uppercase p-2"
         style={{ color: colors.text, backgroundColor: colors.surface }}
       >
-        your to do
+        your to do{" "}
       </Text>
+      <AddTodoButton baseUrl={baseUrl} onCreate={handleTodoCreated} />
 
       {error ? (
         <Text className="mb-2" style={{ color: colors.danger }}>
